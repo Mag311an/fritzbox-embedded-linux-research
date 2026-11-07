@@ -18,3 +18,11 @@ Observed points:
 ![shadow root disabled](../assets/shadow-root-disabled.png)
 
 Observed points:
+
+- `root:*` indicates password-based login for `root` is disabled
+- this suggests that direct password authentication is not enabled for the root account
+- shell access in this case was obtained through the physical UART/debug path rather than normal password login
+
+### Notes
+
+Sensitive values were redacted before publication. Screenshots are included for research documentation only.

@@ -1,100 +1,83 @@
-# FRITZ!Box Embedded Linux Security Research
+# 🔐 FRITZ!Box Embedded Linux Security Research
 
-**Hardware Security | Embedded Linux | UART | Firmware Analysis | Reverse Engineering**
+**Hardware Security · Embedded Linux · UART · Firmware Analysis · Reverse Engineering**
 
-## Overview
+> 🧪 Independent research on devices I own or am authorized to test. Findings are documented as observed; no remote exploitation or CVE is claimed.
 
-This repository documents my independent security research and technical investigation of AVM FRITZ!Box routers, focusing on hardware debugging interfaces, embedded Linux internals, firmware architecture, and local security boundaries.
+## 👋 Overview
 
-The research combines physical hardware access, Linux command-line analysis, serial communication, and firmware reverse engineering.
+This repository documents hands-on investigation of AVM FRITZ!Box embedded Linux systems. It focuses on physical debugging interfaces, serial console access, boot diagnostics, Linux internals, flash partitions, and firmware reverse engineering.
 
-## Research Objectives
+My goal is to turn experiments into **reproducible technical notes** that demonstrate hardware troubleshooting, security methodology, and embedded Linux knowledge.
 
-- Investigate hardware debugging and serial interfaces.
-- Understand the embedded Linux boot process.
-- Examine privileged shell access through physical interfaces.
-- Analyze NAND flash and MTD partition layouts.
-- Explore Linux filesystem structure and device configuration.
-- Investigate potential security weaknesses and document verified findings.
+## 🔌 Research 01 — UART Console (FRITZ!Box 7582)
 
-## Hardware & Software
+![Illustrative UART research terminal animation](assets/uart-console-demo.gif)
 
-| Component | Description |
-|---|---|
-| Target device | AVM FRITZ!Box 7582 |
-| Serial interface | UART, 115200 baud, 8N1 |
-| Interface hardware | Raspberry Pi Pico |
-| Host system | Ubuntu Linux |
-| Programming | MicroPython, Python, Bash |
-| Analysis tools | Linux shell utilities, serial communication tools |
+Using a **Raspberry Pi Pico** as a serial interface to the tested FRITZ!Box 7582, I established UART communication at **115200 baud, 8N1** and obtained an interactive shell.
 
-## Research 01 — UART Access & Linux Shell
+### ✅ Verified observations
 
-A physical UART connection was established using a Raspberry Pi Pico as the serial interface between the router and an Ubuntu computer.
+- Captured output from the embedded Linux boot process.
+- Reached an interactive local shell through physical UART access.
+- Verified effective root identity with `id`:
 
-### Verified observations
+```text
+uid=0(root) gid=0(root)
+```
 
-- Successful serial communication at 115200 baud, 8N1.
-- Captured embedded Linux boot output.
-- Obtained an interactive shell with root privileges on the tested device.
-- Verified the shell's effective identity using the Linux `id` command.
+> 📌 The animation is **illustrative**, not a recording of the actual device session. Physical root-shell access does **not** by itself demonstrate remote code execution, persistence, or a CVE.
 
-Observed output:
+## 💾 Research 02 — MTD Flash Layout (FRITZ!Box 7582)
 
-`uid=0(root) gid=0(root)`
+![Illustrative MTD partitions output animation](assets/mtd-partitions-demo.gif)
 
-**Security context:** Root access through a physical debug interface does not automatically demonstrate remote code execution or a remotely exploitable vulnerability.
+Examined `/proc/mtd` to identify logical flash partitions exposed by the operating system.
 
-## Research 02 — Flash Memory & Partition Analysis
+| Partition | Label | Size (hex) |
+|---|---|---|
+| `mtd0` | `kernel` | `0x00400000` |
+| `mtd1` | `urlader` | `0x00200000` |
+| `mtd2` | `nand-tffs` | `0x00400000` |
+| `mtd3` | `reserved-kernel` | `0x00400000` |
+| `mtd4` | `nvram` | `0x00020000` |
+| `mtd5` | `ubi` | `0x1f0e0000` |
+| `mtd6` | `filesystem` | `0x03013000` |
+| `mtd7` | `reserved-filesystem` | `0x03013000` |
+| `mtd8` | `config` | `0x0020f000` |
+| `mtd9` | `nand-filesystem` | `0x17536000` |
 
-The Linux MTD subsystem was inspected through `/proc/mtd`.
+> 📝 These are **observed MTD entries**, not a visualization of contiguous physical flash addresses. Some layers can describe overlapping storage regions.
 
-Identified partitions include:
+## 🧩 Research 03 — Firmware Analysis (FRITZ!Box 7583)
 
-| Partition | Name |
-|---|---|
-| mtd0 | kernel |
-| mtd1 | urlader |
-| mtd2 | nand-tffs |
-| mtd3 | reserved-kernel |
-| mtd4 | nvram |
-| mtd5 | ubi |
-| mtd6 | filesystem |
-| mtd7 | reserved-filesystem |
-| mtd8 | config |
-| mtd9 | nand-filesystem |
+A **separate** firmware investigation has involved:
 
-These observations provide a foundation for understanding the router's firmware storage and filesystem organization.
+- 📦 SquashFS filesystem inspection
+- 🧠 MIPS big-endian executable analysis
+- 🔎 Embedded libraries, services, and binaries
+- 🛠️ Static analysis of firmware components
 
-## Research 03 — Firmware Reverse Engineering
+The 7582 hardware session and 7583 firmware analysis are **distinct experiments**. Results are not interchangeable.
 
-A separate investigation examines a FRITZ!Box 7583 firmware image, including:
+## 🛠️ Tools & Technologies
 
-- SquashFS filesystem analysis.
-- MIPS big-endian executable inspection.
-- Embedded Linux libraries and binaries.
-- Static analysis of firmware components.
+`Ubuntu` · `Embedded Linux` · `Raspberry Pi Pico` · `MicroPython` · `UART` · `Bash` · `Python` · `MTD` · `UBI` · `SquashFS` · `MIPS`
 
-Findings from the 7582 and 7583 are kept separate to avoid incorrectly treating different hardware and firmware environments as identical.
+## 🎯 Next Research Steps
 
-## Security Research Status
+- [ ] 📷 Add annotated photos of the physical lab setup
+- [ ] 📚 Document UART wiring and serial configuration
+- [ ] 🧾 Publish sanitized session notes and evidence
+- [ ] 🗂️ Expand filesystem and boot-process analysis
+- [ ] 🛡️ Assess security implications without overstating findings
 
-**Research ongoing.**
+## ⚖️ Responsible Research
 
-Physical shell access and filesystem inspection have been demonstrated. No remote exploitation or confirmed CVE is claimed by this repository.
+All research is conducted on hardware I control or am authorized to examine. Public materials omit private keys, credentials, unique device identifiers, and exploit details that require coordinated disclosure. Proprietary firmware images are not redistributed.
 
-Security-sensitive details will be handled through responsible disclosure where appropriate.
+## 👨‍💻 Author
 
-## Ethical Research
+**Mag311an** · B.Sc. Engineering Physics · Independent Hardware & IoT Security Researcher
 
-All hardware testing is performed on devices under my control. Public documentation excludes credentials, private keys, identifying device information, and sensitive undisclosed exploit details.
-
-## Author
-
-**Mag311an**
-
-B.Sc. Engineering Physics
-
-Independent Hardware & IoT Security Researcher
-
-GitHub: https://github.com/Mag311an
+🔗 [GitHub profile](https://github.com/Mag311an)

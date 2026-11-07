@@ -4,6 +4,8 @@
 
 > 🧪 Independent research on devices I own or am authorized to test. Findings are documented as observed; no remote exploitation or CVE is claimed.
 
+![FRITZ!Box 7582](assets/Fritz.png)
+
 ## 👋 Overview
 
 This repository documents hands-on investigation of AVM FRITZ!Box embedded Linux systems. It focuses on physical debugging interfaces, serial console access, boot diagnostics, Linux internals, flash partitions, and firmware reverse engineering.

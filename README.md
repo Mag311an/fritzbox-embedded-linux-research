@@ -71,25 +71,41 @@ My original lab notes include the **MicroPython UART bridge** that links the Ras
 
 The source is adapted from my own project notes and is provided for authorized hardware research. The observed `uid=0(root)` result comes from a local physical console, not a network vulnerability.
 
-## 💾 Research 02 — MTD Flash Layout (FRITZ!Box 7582)
+## 👤 Research 02 — Linux Account Enumeration (FRITZ!Box 7582)
 
+After obtaining an interactive root shell through the physical UART interface, I investigated the embedded Linux account configuration and authentication mechanisms.
 
-Examined `/proc/mtd` to identify logical flash partitions exposed by the operating system.
+### 🔍 Inspecting `/etc/passwd`
 
-| Partition | Label | Size (hex) |
-|---|---|---|
-| `mtd0` | `kernel` | `0x00400000` |
-| `mtd1` | `urlader` | `0x00200000` |
-| `mtd2` | `nand-tffs` | `0x00400000` |
-| `mtd3` | `reserved-kernel` | `0x00400000` |
-| `mtd4` | `nvram` | `0x00020000` |
-| `mtd5` | `ubi` | `0x1f0e0000` |
-| `mtd6` | `filesystem` | `0x03013000` |
-| `mtd7` | `reserved-filesystem` | `0x03013000` |
-| `mtd8` | `config` | `0x0020f000` |
-| `mtd9` | `nand-filesystem` | `0x17536000` |
+![Linux passwd enumeration](assets/passwd-enumeration.png)
 
-> 📝 These are **observed MTD entries**, not a visualization of contiguous physical flash addresses. Some layers can describe overlapping storage regions.
+**Verified observations:**
+
+- The `root` account is configured with `/bin/sh`.
+- The `smb` and `asec` accounts use `/noshell`.
+- Additional device-specific accounts, including `boxusr100` and `boxusr100int`, are present.
+- Some account information has been redacted to protect sensitive data.
+
+### 🔐 Inspecting `/etc/shadow`
+
+![Root shadow configuration](assets/shadow-root-disabled.png)
+
+The root account's shadow entry begins with:
+
+`root:*:`
+
+The `*` in the password field indicates that password-based authentication using this entry is disabled.
+
+### 🛡️ Security Observations
+
+- Root privileges were verified through a physical UART console.
+- The root account has an interactive shell configured.
+- Password-based root authentication is disabled through the inspected shadow entry.
+- Physical debugging access and remote exploitation represent different security scenarios.
+
+> 📝 These observations document the tested device's local account configuration. They do not establish a remotely exploitable vulnerability.
+
+📄 [Detailed Linux Enumeration Notes](docs/linux-enumeration.md)
 
 ## 🧩 Research 03 — Firmware Analysis (FRITZ!Box 7583)
 

@@ -4,7 +4,7 @@ After obtaining shell access, I inspected local account information to understan
 
 ### `/etc/passwd` inspection
 
-![passwd enumeration](assets/passwd-enumeration.png)
+![passwd enumeration](../assets/passwd-enumeration.png)
 
 Observed points:
 
@@ -15,6 +15,6 @@ Observed points:
 
 ### `/etc/shadow` inspection
 
-![shadow root disabled](assets/shadow-root-disabled.png)
+![shadow root disabled](../assets/shadow-root-disabled.png)
 
 Observed points:

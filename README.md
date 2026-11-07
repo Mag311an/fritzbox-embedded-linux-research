@@ -12,7 +12,6 @@ My goal is to turn experiments into **reproducible technical notes** that demons
 
 ## 🔌 Research 01 — UART Console (FRITZ!Box 7582)
 
-![Illustrative UART research terminal animation](assets/uart-console-demo.gif)
 
 Using a **Raspberry Pi Pico** as a serial interface to the tested FRITZ!Box 7582, I established UART communication at **115200 baud, 8N1** and obtained an interactive shell.
 
@@ -72,7 +71,6 @@ The source is adapted from my own project notes and is provided for authorized h
 
 ## 💾 Research 02 — MTD Flash Layout (FRITZ!Box 7582)
 
-![Illustrative MTD partitions output animation](assets/mtd-partitions-demo.gif)
 
 Examined `/proc/mtd` to identify logical flash partitions exposed by the operating system.
 
